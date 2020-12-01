@@ -12,11 +12,13 @@ func main() {
 	numbers := readNumbers("test_input.txt")
 	fmt.Printf("Read %d numbers\n", len(numbers))
 	findSum(numbers, 2020)
+	findSumOf3(numbers, 2020)
 	fmt.Printf("\n")
 
 	numbers = readNumbers("my_input.txt")
 	fmt.Printf("Read %d numbers\n", len(numbers))
 	findSum(numbers, 2020)
+	findSumOf3(numbers, 2020)
 	fmt.Printf("\n")
 }
 
@@ -51,6 +53,19 @@ func findSum(numbers []int, expectedSum int) {
 			sum := numbers[a] + numbers[b]
 			if sum == expectedSum {
 				fmt.Printf("%d + %d = %d -- %d * %d = %d\n", numbers[a], numbers[b], sum, numbers[a], numbers[b], numbers[a]*numbers[b])
+			}
+		}
+	}
+}
+
+func findSumOf3(numbers []int, expectedSum int) {
+	for a := 0; a < len(numbers); a++ {
+		for b := a; b < len(numbers); b++ {
+			for c := b; c < len(numbers); c++ {
+				sum := numbers[a] + numbers[b] + numbers[c]
+				if sum == expectedSum {
+					fmt.Printf("%d + %d + %d = %d -- %d * %d * %d = %d\n", numbers[a], numbers[b], numbers[c], sum, numbers[a], numbers[b], numbers[c], numbers[a]*numbers[b]*numbers[c])
+				}
 			}
 		}
 	}
