@@ -19,9 +19,15 @@ type testentry struct {
 	password  string
 }
 
-func validate(condition condition, password string) bool {
+func validatePart1(condition condition, password string) bool {
 	c := strings.Count(password, condition.char)
 	return c >= condition.atLeast && c <= condition.atMost
+}
+
+func validatePart2(condition condition, password string) bool {
+	char1 := password[condition.atLeast-1 : condition.atLeast]
+	char2 := password[condition.atMost-1 : condition.atMost]
+	return (char1 == condition.char) != (char2 == condition.char)
 }
 
 func readData(filename string) ([]testentry, error) {
