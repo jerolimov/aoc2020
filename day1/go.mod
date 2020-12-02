@@ -1,4 +1,4 @@
-module github.com/jerolimov/aoc2020
+module github.com/jerolimov/aoc2020/day1
 
 go 1.15
 
