@@ -2,12 +2,11 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"os"
 	"strings"
 )
-
-type passport map[string]string
 
 func readFile(filename string) ([]passport, error) {
 	file, err := os.Open(filename)
@@ -25,7 +24,7 @@ func read(reader io.Reader) ([]passport, error) {
 
 	scanner := bufio.NewScanner(reader)
 	for scanner.Scan() {
-		line := scanner.Text()
+		line := strings.TrimSpace(scanner.Text())
 		// fmt.Printf("text: %s\n", line)
 		if line == "" {
 			if len(passport) > 0 {
@@ -37,6 +36,9 @@ func read(reader io.Reader) ([]passport, error) {
 		} else {
 			for _, dataPair := range strings.Split(line, " ") {
 				colonIndex := strings.Index(dataPair, ":")
+				if colonIndex == -1 {
+					return passports, fmt.Errorf("Missing colon in dataPair \"%v\"", dataPair)
+				}
 				key := dataPair[0:colonIndex]
 				value := dataPair[colonIndex+1:]
 				passport[key] = value
@@ -53,11 +55,4 @@ func read(reader io.Reader) ([]passport, error) {
 		return passports, err
 	}
 	return passports, nil
-}
-
-func isPassportValid(passport passport) bool {
-	if passport["cid"] == "" {
-		return len(passport) == 7
-	}
-	return len(passport) == 8
 }
