@@ -60,3 +60,19 @@ func reduceAnyone(declarations groupDeclaration) declarationAnswers {
 	}
 	return result
 }
+
+func reduceEveryone(declarations groupDeclaration) declarationAnswers {
+	result := declarationAnswers{}
+	for index := range result {
+		yes := 0
+		for _, declaration := range declarations {
+			if declaration[index] {
+				yes++
+			}
+		}
+		if yes == len(declarations) {
+			result[index] = true
+		}
+	}
+	return result
+}
