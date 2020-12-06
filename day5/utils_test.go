@@ -1,8 +1,7 @@
 package main
 
 import (
-	"bufio"
-	"os"
+	"reflect"
 	"testing"
 )
 
@@ -50,27 +49,41 @@ func TestBinarySpacePartitioningFromFile(t *testing.T) {
 
 	for _, testcase := range testcases {
 		t.Run(testcase.filename, func(t *testing.T) {
-			highestSeatID := -1
-
-			file, err := os.Open(testcase.filename)
+			lines, err := readLinesFromFile(testcase.filename)
 			if err != nil {
 				t.Error(err)
 				return
 			}
-			defer file.Close()
 
-			scanner := bufio.NewScanner(file)
-			for scanner.Scan() {
-				line := scanner.Text()
+			highestSeatID := -1
+			for _, line := range lines {
 				seatID := getSeatID(line)
 				if highestSeatID < seatID {
 					highestSeatID = seatID
 				}
 			}
-
 			if highestSeatID != testcase.expectedHighestSeatID {
 				t.Errorf("Unexpected highest seat id: actual %v, expected %v", highestSeatID, testcase.expectedHighestSeatID)
 			}
 		})
+	}
+}
+
+func TestFreeSeatIDs(t *testing.T) {
+	lines, err := readLinesFromFile("my_input.txt")
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	seatIDs := make(map[int]bool)
+	for _, line := range lines {
+		seatIDs[getSeatID(line)] = true
+	}
+	freeSeatIDs := getFreeSeatIDs(seatIDs)
+	expectedFreeSeatIDs := []int{651}
+
+	if !reflect.DeepEqual(freeSeatIDs, expectedFreeSeatIDs) {
+		t.Errorf("Unexpected free seat IDs: actual %v, expected %v", freeSeatIDs, expectedFreeSeatIDs)
 	}
 }
