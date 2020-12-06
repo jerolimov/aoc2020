@@ -8,36 +8,55 @@ import (
 
 type declarationAnswers [26]bool
 
-func readGroupDeclarationFromFile(filename string) ([]declarationAnswers, error) {
+type groupDeclaration []declarationAnswers
+
+func readGroupedDeclarationFromFile(filename string) ([]groupDeclaration, error) {
 	file, err := os.Open(filename)
 	if err != nil {
 		return nil, err
 	}
 	defer file.Close()
-	return readGroupDeclaration(file)
+	return readGroupedDeclaration(file)
 }
 
-func readGroupDeclaration(reader io.Reader) ([]declarationAnswers, error) {
-	declarations := make([]declarationAnswers, 0)
+func readGroupedDeclaration(reader io.Reader) ([]groupDeclaration, error) {
+	groupedDeclarations := make([]groupDeclaration, 0)
+
 	scanner := bufio.NewScanner(reader)
 
-	declaration := declarationAnswers{}
+	groupDeclaration := make([]declarationAnswers, 0)
 
 	for scanner.Scan() {
 		line := scanner.Text()
 		if line == "" {
-			declarations = append(declarations, declaration)
-			declaration = declarationAnswers{}
+			groupedDeclarations = append(groupedDeclarations, groupDeclaration)
+			groupDeclaration = make([]declarationAnswers, 0)
 		} else {
+			declaration := declarationAnswers{}
 			for _, b := range []byte(line) {
 				index := b - 'a'
 				declaration[index] = true
 			}
+			groupDeclaration = append(groupDeclaration, declaration)
 		}
 	}
-	declarations = append(declarations, declaration)
+
+	groupedDeclarations = append(groupedDeclarations, groupDeclaration)
+
 	if err := scanner.Err(); err != nil {
-		return declarations, err
+		return groupedDeclarations, err
 	}
-	return declarations, nil
+	return groupedDeclarations, nil
+}
+
+func reduceAnyone(declarations groupDeclaration) declarationAnswers {
+	result := declarationAnswers{}
+	for _, declaration := range declarations {
+		for index, answer := range declaration {
+			if answer {
+				result[index] = true
+			}
+		}
+	}
+	return result
 }
